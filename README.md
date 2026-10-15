@@ -118,8 +118,3 @@ docker compose up --build          # api :8080 + dashboard :8501
 
 The devcontainer (` .devcontainer/`) builds the same image for VS Code.
 
-## Documentation
-
-* [`docs/platform-guide.md`](docs/platform-guide.md) — layers, contracts, statistical engine, action engine, sharing and dashboard reference.
-* [`docs/DVDCF_README.md`](docs/DVDCF_README.md) — legacy crawler framework.
-* Research context and the SVTP / action-family specification in `Final_paper.md`, `AGENTS.md`.

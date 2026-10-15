@@ -1,0 +1,2363 @@
+{
+  "dataset_id": "sports_seo_tunisia_v1",
+  "dataset_name": "Sports SEO Analytical Dataset",
+  "domain": "sports_seo",
+  "version": "1.0.0",
+  "format": "csv",
+  "path": "data/raw/sports_seo/sports_seo_page_features.csv",
+  "primary_key": [
+    "url",
+    "query"
+  ],
+  "partition_columns": [],
+  "classification": "internal",
+  "description": "Page-level SEO analytical feature table for Tunisian sports search demand: 2,032 query-result observations across 213 page, query, semantic, link-graph, commerce, schema, trust, technical and competitor-relative attributes. First domain implementation of the enterprise analytics platform.",
+  "source_type": "external_web_analysis",
+  "refresh_frequency": "manual",
+  "schema_version": "1.0.0",
+  "row_count_expected": 2032,
+  "column_count_expected": 213,
+  "validation": {
+    "allow_extra_columns": true,
+    "allow_missing_columns": false,
+    "primary_key_must_be_unique": true
+  },
+  "lineage": {
+    "originating_project": "Mapping Sports Search Demand and Brand Visibility in Tunisia",
+    "produced_by": "DVDCF feature engineering pipeline",
+    "observation_type": "observational",
+    "notes": [
+      "SERP position is an observed outcome, not a manipulated variable.",
+      "Domain-derived entity does not necessarily mean manufacturer brand.",
+      "Statistical association must not be read as causation."
+    ]
+  },
+  "attributes": [
+    {
+      "name": "url",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "identity",
+      "present_in_source": true,
+      "description": "Canonical page URL as collected from the search result."
+    },
+    {
+      "name": "brands",
+      "dtype": "object",
+      "nullable": true,
+      "origin": "NORMALIZED",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (normalized)."
+    },
+    {
+      "name": "query",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "query",
+      "present_in_source": true,
+      "description": "Search query that produced the observation."
+    },
+    {
+      "name": "domain",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "identity",
+      "present_in_source": true,
+      "description": "Registered domain of the page URL, normalised from the URL host."
+    },
+    {
+      "name": "path",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "identity",
+      "present_in_source": true,
+      "description": "identity attribute (normalized)."
+    },
+    {
+      "name": "page_type",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "content_type",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "language",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "is_indexable",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "canonical_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "canonical_self_referencing",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "robots_index",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "robots_follow",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "https_status_code",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "redirect_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "Word count of the extracted main page text."
+    },
+    {
+      "name": "char_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "sentence_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "paragraph_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "avg_sentence_length",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "avg_paragraph_length",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "unique_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "lexical_diversity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "list_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "ordered_list_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "unordered_list_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "table_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "content_depth",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "Depth score derived from the page content structure."
+    },
+    {
+      "name": "text_to_html_ratio",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "h1_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "h2_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "h3_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "h4_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "h5_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "h6_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "heading_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "heading_depth",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "avg_heading_length",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "h1_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "h2_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "h3_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "keyword_in_h1",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "keyword_in_headings",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "title_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (derived_feature)."
+    },
+    {
+      "name": "title_length",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "title_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "meta_description_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (derived_feature)."
+    },
+    {
+      "name": "meta_description_length",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "meta_description_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "keyword_in_title",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "brand_in_title",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "keyword_in_meta_description",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "cta_in_title",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "cta_in_meta_description",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (raw_source)."
+    },
+    {
+      "name": "image_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "images_with_alt",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "images_without_alt",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "alt_text_coverage",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "avg_alt_text_length",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "metadata",
+      "present_in_source": true,
+      "description": "metadata attribute (derived_feature)."
+    },
+    {
+      "name": "video_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "embedded_video",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "youtube_video",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "media_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (raw_source)."
+    },
+    {
+      "name": "internal_link_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "unique_internal_link_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "internal_links_to_same_domain",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "internal_links_to_products",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "internal_links_to_categories",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "internal_links_to_homepage",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "internal_anchor_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "unique_internal_anchor_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "contextual_internal_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "navigation_internal_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "breadcrumb_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "orphan_page",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (derived_feature)."
+    },
+    {
+      "name": "in_degree",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (derived_feature)."
+    },
+    {
+      "name": "out_degree",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (derived_feature)."
+    },
+    {
+      "name": "internal_pagerank",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "Internal PageRank estimate over the crawled link graph."
+    },
+    {
+      "name": "external_link_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "unique_external_domains",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "identity",
+      "present_in_source": true,
+      "description": "identity attribute (raw_source)."
+    },
+    {
+      "name": "external_dofollow_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "observation",
+      "present_in_source": true,
+      "description": "observation attribute (raw_source)."
+    },
+    {
+      "name": "external_nofollow_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "observation",
+      "present_in_source": true,
+      "description": "observation attribute (raw_source)."
+    },
+    {
+      "name": "external_authority_domains",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "identity",
+      "present_in_source": true,
+      "description": "identity attribute (derived_feature)."
+    },
+    {
+      "name": "citation_links",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "url_length",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "url_depth",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "url_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "url_has_keyword",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "url_has_brand",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "url_has_category",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "url_has_product",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "hyphen_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "query_parameter_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "schema_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "schema_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (raw_source)."
+    },
+    {
+      "name": "schema_types_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (raw_source)."
+    },
+    {
+      "name": "has_product_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "has_breadcrumb_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "has_organization_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "has_webpage_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "has_website_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "has_faq_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "has_review_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "has_offer_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "has_local_business_schema",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "schema_completeness_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "is_product_page",
+      "dtype": "bool",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "price_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "price_value",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (raw_source)."
+    },
+    {
+      "name": "currency_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "availability_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "in_stock",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "add_to_cart_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "buy_now_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "product_sku_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "product_brand_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "product_model_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "product_specifications_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "size_selector_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "color_selector_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "shipping_information_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "payment_information_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "warranty_information_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "return_policy_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "review_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (raw_source)."
+    },
+    {
+      "name": "rating_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "rating_value",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (raw_source)."
+    },
+    {
+      "name": "review_schema_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "offer_schema_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "commerce_completeness_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "contact_information_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "phone_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "email_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "address_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "privacy_policy_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "terms_conditions_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "return_policy_present_repeat",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (derived_feature)."
+    },
+    {
+      "name": "about_page_linked",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (raw_source)."
+    },
+    {
+      "name": "social_links_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "author_information_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "trust_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "trust",
+      "present_in_source": true,
+      "description": "trust attribute (derived_feature)."
+    },
+    {
+      "name": "https",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "https_status",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "viewport_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "mobile_meta_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "hreflang_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "language_declared",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "charset_declared",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "structured_data_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "schema",
+      "present_in_source": true,
+      "description": "schema attribute (derived_feature)."
+    },
+    {
+      "name": "page_size_kb",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (raw_source)."
+    },
+    {
+      "name": "html_size_kb",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "commerce",
+      "present_in_source": true,
+      "description": "commerce attribute (raw_source)."
+    },
+    {
+      "name": "response_time_ms",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "dom_element_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (raw_source)."
+    },
+    {
+      "name": "click_depth",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "breadcrumb_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "observation",
+      "present_in_source": true,
+      "description": "observation attribute (derived_feature)."
+    },
+    {
+      "name": "navigation_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "observation",
+      "present_in_source": true,
+      "description": "observation attribute (derived_feature)."
+    },
+    {
+      "name": "footer_links_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "header_links_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "link_graph",
+      "present_in_source": true,
+      "description": "link graph attribute (raw_source)."
+    },
+    {
+      "name": "main_content_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "content",
+      "present_in_source": true,
+      "description": "content attribute (derived_feature)."
+    },
+    {
+      "name": "sidebar_present",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "observation",
+      "present_in_source": true,
+      "description": "observation attribute (derived_feature)."
+    },
+    {
+      "name": "template_type",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (normalized)."
+    },
+    {
+      "name": "page_hierarchy_level",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "technical",
+      "present_in_source": true,
+      "description": "technical attribute (derived_feature)."
+    },
+    {
+      "name": "brand_mentioned_on_page",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "brand_mentions_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "brand_in_h1",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "brand_in_url",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "brand_in_meta",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "official_domain",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (normalized)."
+    },
+    {
+      "name": "brand_consistency_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "embedding_dimension",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "topic_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "topic_coverage_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "entity_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "named_entity_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "sports_entity_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "product_entity_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "brand_entity_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (derived_feature)."
+    },
+    {
+      "name": "semantic_coherence_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "topical_authority_score",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_word_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "query",
+      "present_in_source": true,
+      "description": "query attribute (derived_feature)."
+    },
+    {
+      "name": "query_character_count",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "query",
+      "present_in_source": true,
+      "description": "query attribute (derived_feature)."
+    },
+    {
+      "name": "query_brand_mentioned",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "entity",
+      "present_in_source": true,
+      "description": "entity attribute (raw_source)."
+    },
+    {
+      "name": "query_intent",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "query",
+      "present_in_source": true,
+      "description": "query attribute (normalized)."
+    },
+    {
+      "name": "query_category",
+      "dtype": "object",
+      "nullable": false,
+      "origin": "NORMALIZED",
+      "semantic_type": "query",
+      "present_in_source": true,
+      "description": "query attribute (normalized)."
+    },
+    {
+      "name": "query_page_semantic_similarity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "Semantic similarity between the query and the page body."
+    },
+    {
+      "name": "query_title_similarity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_h1_similarity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_meta_similarity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_heading_similarity",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_body",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_title",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_h1",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_headings",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_meta",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "query_term_coverage_anchor",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "semantic",
+      "present_in_source": true,
+      "description": "semantic attribute (derived_feature)."
+    },
+    {
+      "name": "title_relevance_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "h1_relevance_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "content_relevance_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "semantic_relevance_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "word_count_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "semantic_similarity_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "pagerank_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "internal_links_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "schema_score_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "commerce_score_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "content_depth_vs_competitors",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "authority_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "Page authority minus the competitor benchmark for the same query."
+    },
+    {
+      "name": "semantic_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "content_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "schema_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "commerce_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "internal_link_gap",
+      "dtype": "float64",
+      "nullable": false,
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "competitor_relative",
+      "present_in_source": true,
+      "description": "competitor relative attribute (derived_feature)."
+    },
+    {
+      "name": "serp_position",
+      "dtype": "int64",
+      "nullable": false,
+      "origin": "RAW_SOURCE",
+      "semantic_type": "ranking",
+      "present_in_source": true,
+      "description": "Observed organic SERP position (1-10 in the collected environment)."
+    },
+    {
+      "name": "brand_extraction_source",
+      "dtype": "string",
+      "origin": "NORMALIZED",
+      "semantic_type": "entity",
+      "description": "Mechanism used to derive the entity label from the source row.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "entity",
+      "dtype": "string",
+      "origin": "NORMALIZED",
+      "semantic_type": "entity",
+      "description": "Domain-derived entity label. Not necessarily a manufacturer brand.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "query_word_count_calc",
+      "dtype": "int64",
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "query",
+      "description": "Token count of the query string, recomputed by the platform.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "rank_group",
+      "dtype": "string",
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "ranking",
+      "description": "Banded SERP position group (for example 1-3, 4-6, 7-10).",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "rank_group_robust",
+      "dtype": "string",
+      "origin": "DERIVED_FEATURE",
+      "semantic_type": "ranking",
+      "description": "Robust SERP position grouping used for sensitivity checks.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "rank_score",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Normalised rank signal used by the visibility model.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "rank_score_norm",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Rescaled rank signal in [0, 1].",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "demand_score",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand component. Neutral while no usable Google Trends observations exist.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "demand_score_norm",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Rescaled demand component in [0, 1]; neutral (0.5) when unavailable.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "demand_score_adjusted",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Demand component after external adjustments. Unavailable in this dataset.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "demand_component_available",
+      "dtype": "bool",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "False when no empirical temporal demand observations were available.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "entity_visibility",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Entity-level visibility signal aggregated from its observations.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "entity_score_norm",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Rescaled entity visibility signal in [0, 1].",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "svtp_score",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Search Visibility Trend Proxy: an externally observable rank/entity visibility proxy, not Search Console performance.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "page_trend",
+      "dtype": "int64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "visibility",
+      "description": "Balanced binary label derived from the SVTP distribution.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "trend_mean",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand summary. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_median",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand summary. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_recent",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand summary. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_historical",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand summary. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_growth",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand growth. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_slope",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand slope. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_volatility",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand volatility. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_peak",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand peak. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_min",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Temporal demand minimum. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_n_obs",
+      "dtype": "int64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Count of usable demand observations. Zero in this dataset.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_level_norm",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Normalised demand level. Neutral while demand is unavailable.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_growth_norm",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Normalised demand growth. Neutral while demand is unavailable.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "trend_score",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Composite demand score. Neutral while demand is unavailable.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "related_trend_score",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Related-query demand score. Not populated: no usable Google Trends observations.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "tiktok_engagement_mean",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Social engagement signal. Optional external demand input.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "tiktok_engagement_max",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Social engagement signal. Optional external demand input.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "tiktok_video_count",
+      "dtype": "int64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Social content volume signal. Optional external demand input.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "tiktok_adjustment",
+      "dtype": "float64",
+      "origin": "ANALYTICAL_OUTPUT",
+      "semantic_type": "demand",
+      "description": "Social adjustment factor applied to the demand component.",
+      "present_in_source": false,
+      "available": false,
+      "nullable": true
+    },
+    {
+      "name": "CONTENT_EXPANSION_REFRESH_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the content expansion/refresh action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "QUERY_PAGE_ALIGNMENT_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the query-page alignment action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "METADATA_SNIPPET_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the metadata/snippet action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "INTERNAL_AUTHORITY_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the internal authority action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "COMMERCE_SCHEMA_TRUST_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the commerce/schema/trust action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "TECHNICAL_INDEXABILITY_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Transparent prioritisation score for the technical indexability action family.",
+      "present_in_source": false,
+      "nullable": true
+    },
+    {
+      "name": "primary_action",
+      "dtype": "string",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Highest scoring action family for the observation.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "primary_action_score",
+      "dtype": "float64",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Score of the highest scoring action family.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "secondary_action",
+      "dtype": "string",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Second highest scoring action family for the observation.",
+      "present_in_source": false,
+      "nullable": false
+    },
+    {
+      "name": "action_priority",
+      "dtype": "string",
+      "origin": "DECISION_OUTPUT",
+      "semantic_type": "decision",
+      "description": "Heuristic priority band (High/Medium/Low). A prioritisation heuristic, not a causal claim.",
+      "present_in_source": false,
+      "nullable": false
+    }
+  ]
+}

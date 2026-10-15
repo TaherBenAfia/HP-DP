@@ -1,0 +1,32 @@
+# VCS / tooling
+.git
+.gitignore
+.mypy_cache
+.pytest_cache
+.pytest_tmp
+.ruff_cache
+.venv
+venv
+__pycache__
+*.pyc
+*.egg-info
+build
+dist
+
+# Heavy local artifacts (mounted as volumes in docker-compose)
+data/checkpoints
+data/dataset
+data/final_data
+data/input_jsons
+data/bronze
+data/silver
+data/gold
+data_lake
+logs
+
+# Research material not needed inside the image
+research_papers
+research_papers_md
+geo_paper
+google_docs
+*.pdf

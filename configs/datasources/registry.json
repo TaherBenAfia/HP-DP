@@ -1,0 +1,11 @@
+{
+  "registry_version": "1.0.0",
+  "description": "Datasource registry. References dataset contracts; never duplicates their schema.",
+  "datasources": [
+    {
+      "id": "sports_seo_tunisia_v1",
+      "contract": "configs/datasources/sports_seo.json",
+      "enabled": true
+    }
+  ]
+}

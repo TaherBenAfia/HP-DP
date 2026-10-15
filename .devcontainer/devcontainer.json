@@ -1,0 +1,28 @@
+{
+  "name": "enterprise-analytics-platform",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "forwardPorts": [8080, 8501, 4200],
+  "portsAttributes": {
+    "8080": { "label": "Sharing API" },
+    "8501": { "label": "Streamlit dashboard" },
+    "4200": { "label": "Prefect server" }
+  },
+  "postCreateCommand": "pip install -e \".[platform,dev]\"",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "realm": "enterprise",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "analytics-consumer",
+      "name": "Analytics Consumer",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "consumer-secret-change-me",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [],
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      }
+    },
+    {
+      "clientId": "analytics-platform",
+      "name": "Analytics Platform (API)",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "platform-secret-change-me",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [],
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "analytics-reader",
+        "description": "Read access to analytics data products",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "analytics-admin",
+        "description": "Administrative access to analytics platform",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "defaultDefaultClientScopes": [
+    "web-origins",
+    "roles",
+    "profile",
+    "email"
+  ],
+  "defaultOptionalClientScopes": [
+    "offline_access",
+    "microprofile-jwt"
+  ]
+}

@@ -1,0 +1,102 @@
+services:
+  # Keycloak for OIDC authentication
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    command:
+      - "start-dev"
+      - "--http-port=8081"
+      - "--http-relative-path=/auth"
+      - "--hostname=localhost"
+      - "--hostname-url=http://localhost:8081/auth"
+    ports:
+      - "8081:8081"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/auth/realms/master"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # API service with OIDC authentication
+  api:
+    build: .
+    image: enterprise-analytics-platform:latest
+    command: uvicorn src.sharing.api:app --host 0.0.0.0 --port 8080
+    ports:
+      - "8080:8080"
+    environment:
+      SHARING_REQUIRE_AUTH: ${SHARING_REQUIRE_AUTH:-false}
+      SHARING_JWT_SECRET: ${SHARING_JWT_SECRET:-}
+      SHARING_JWKS_URL: ${SHARING_JWKS_URL:-http://localhost:8081/auth/realms/enterprise/protocol/openid-connect/certs}
+      OIDC_ISSUER: ${OIDC_ISSUER:-http://localhost:8081/auth/realms/enterprise}
+      KEYCLOAK_URL: http://keycloak:8081/auth
+    volumes:
+      - ./data:/app/data
+      - ./sharing:/app/sharing
+      - ./configs:/app/configs
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # Dashboard service
+  dashboard:
+    image: enterprise-analytics-platform:latest
+    build: .
+    command: streamlit run app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    ports:
+      - "8501:8501"
+    environment:
+      SHARING_REQUIRE_AUTH: ${SHARING_REQUIRE_AUTH:-false}
+      SHARING_JWT_SECRET: ${SHARING_JWT_SECRET:-}
+      SHARING_JWKS_URL: ${SHARING_JWKS_URL:-}
+      OIDC_ISSUER: ${OIDC_ISSUER:-http://localhost:8081/auth/realms/enterprise}
+    volumes:
+      - ./data:/app/data
+      - ./sharing:/app/sharing
+      - ./configs:/app/configs
+    depends_on:
+      - api
+      - keycloak
+
+  # Prefect orchestration (optional profile)
+  prefect:
+    image: enterprise-analytics-platform:latest
+    build: .
+    profiles: ["orchestration"]
+    command: prefect server start --host 0.0.0.0 --port 4200
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./data:/app/data
+      - ./sharing:/app/sharing
+      - ./configs:/app/configs
+      - ./.prefect:/root/.prefect
+
+  # Redpanda: Kafka-compatible streaming event broker
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
+    profiles: ["streaming"]
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 512M
+      - --overprovisioned
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --mode dev-container
+    ports:
+      - "19092:19092"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+
+volumes:
+  redpanda_data:

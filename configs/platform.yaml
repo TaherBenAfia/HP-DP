@@ -1,0 +1,95 @@
+# Enterprise Analytics Platform - global configuration.
+#
+# Every value here is overridable by CLI flags. Nothing in src/ hard-codes a
+# path or a threshold that belongs in this file.
+
+platform:
+  name: enterprise-analytics-platform
+  version: "1.0.0"
+  # Prefix written into every ingestion manifest / lineage record.
+  pipeline_version: "1.0.0"
+  # All storage is local filesystem. No cloud service is required.
+  storage_backend: filesystem
+
+paths:
+  raw_dir: data/raw
+  bronze_dir: data/bronze
+  bronze_metadata_dir: data/bronze/_metadata
+  bronze_manifest_dir: data/bronze/_manifests
+  silver_dir: data/silver
+  quarantine_dir: data/silver/quarantine
+  gold_dir: data/gold
+  duckdb_path: data/analytics.duckdb
+  datasources_dir: configs/datasources
+  datasource_registry: configs/datasources/registry.json
+  sharing_manifest_dir: sharing/manifests
+
+ingestion:
+  # CSV reading defaults; a datasource contract may override per dataset.
+  csv:
+    delimiter: ","
+    encoding: utf-8
+    null_values: ["", "NA", "N/A", "null", "None", "nan"]
+  # A rerun with an identical source checksum re-uses the previous run.
+  idempotent: true
+
+silver:
+  # Rows failing a hard check are quarantined, never silently dropped.
+  drop_duplicates: true
+  quarantine_invalid_rows: true
+
+quality:
+  # Severity below which a failed check does not quarantine a row.
+  quarantine_severities: ["error"]
+
+statistics:
+  fdr_method: benjamini-hochberg
+  fdr_alpha: 0.05
+  min_observations: 30
+  # Association only. Never interpreted as causation.
+  interpretation: associational
+
+visibility:
+  # Search Visibility Trend Proxy. The demand component is intentionally
+  # neutral while no usable Google Trends observations exist.
+  demand_component_available: false
+  demand_neutral_value: 0.5
+  weights:
+    rank: 0.5
+    entity: 0.5
+    demand: 0.0
+
+action_engine:
+  # Priority thresholds are heuristics, not causal claims.
+  priority_thresholds:
+    high: 0.66
+    medium: 0.33
+  # Action families implemented by the sports SEO domain adapter.
+  families:
+    - content_enrichment
+    - metadata_optimization
+    - internal_linking
+    - schema_commerce
+    - technical_seo
+    - entity_authority
+
+data_products:
+  # Semantic version stamped on every published Gold table.
+  version: "1.0.0"
+  schema_version: "1.0.0"
+
+sharing:
+  oidc_issuer: ${OIDC_ISSUER:-http://localhost:8080/realms/enterprise}
+  audience: enterprise-analytics
+  token_ttl_seconds: 300
+  read_only: true
+  # When false (local development) the read API answers without a token.
+  require_auth: ${SHARING_REQUIRE_AUTH:-false}
+  # Keycloak / OIDC JWKS endpoint; empty falls back to jwt_secret (HS256).
+  jwks_url: ${SHARING_JWKS_URL:-}
+  # Shared secret for local HS256 tokens; never committed.
+  jwt_secret: ${SHARING_JWT_SECRET:-}
+
+logging:
+  level: INFO
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"

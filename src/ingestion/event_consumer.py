@@ -17,7 +17,7 @@ from typing import Any
 
 import polars as pl
 from deltalake import write_deltalake
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from src.ingestion.broker import EventBroker
 from src.ingestion.event_schema import validate_event

@@ -7,10 +7,10 @@ Supports versioned read-only publication to specified tenants and instant revoca
 from __future__ import annotations
 
 import json
-import sqlite3
 import uuid
 from datetime import UTC, datetime
 from typing import Any
+
 from pydantic import BaseModel, Field
 
 from src.platform.metadata_store import MetadataStore

@@ -12,8 +12,9 @@ from __future__ import annotations
 
 import random
 import uuid
+from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
-from typing import Any, Iterator
+from typing import Any
 
 
 class SyntheticEventGenerator:
@@ -182,5 +183,4 @@ class SyntheticEventGenerator:
         base_time: datetime | None = None,
     ) -> Iterator[dict[str, Any]]:
         """Stream synthetic events sequentially."""
-        for event in self.generate_batch(count=count, base_time=base_time):
-            yield event
+        yield from self.generate_batch(count=count, base_time=base_time)

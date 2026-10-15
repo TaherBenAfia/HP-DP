@@ -1,6 +1,7 @@
 """Unit tests for the AssetGraph, cycle detection, and dependency resolution."""
 
 import pytest
+
 from src.platform.asset_graph import AssetGraph, CycleError, DataAsset, TaskDefinition
 
 

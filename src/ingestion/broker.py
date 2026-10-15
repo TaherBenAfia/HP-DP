@@ -28,7 +28,7 @@ class EventBroker(ABC):
         limit: int = 100,
     ) -> list[tuple[int, dict[str, Any]]]:
         """Fetch uncommitted messages for a consumer group.
-        
+
         Returns a list of (offset, event) tuples.
         """
         pass

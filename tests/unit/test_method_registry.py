@@ -1,6 +1,7 @@
 """Unit tests for the analytical and statistical method registry."""
 
 import polars as pl
+
 from src.analytics.method_registry import (
     create_default_method_registry,
     run_descriptive_summary,

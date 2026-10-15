@@ -13,10 +13,8 @@ A shared-secret (HS256) mode is available for tests and small deployments.
 
 Scope conventions:
 
-============ ==========================================================
 ``analytics:read``  read published Gold products, lineage and manifests
 ``analytics:admin`` reserved for administrative endpoints (none yet)
-============ ==========================================================
 """
 
 from __future__ import annotations
@@ -24,6 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import jwt as pyjwt
+from typing import Any, cast
 
 from src.platform.config import PlatformConfig, load_platform_config
 
@@ -55,7 +54,7 @@ class Principal:
         }
 
 
-def _scopes_from_claims(claims: dict) -> frozenset[str]:
+def _scopes_from_claims(claims: dict[str, object]) -> frozenset[str]:
     """Read scopes from standard, Keycloak or custom claims."""
     scopes: set[str] = set()
     raw = claims.get("scope") or claims.get("scp") or claims.get("scopes") or ""
@@ -111,23 +110,22 @@ class TokenValidator:
         """Validate one JWT and return its principal."""
         if not token:
             raise TokenValidationError("empty bearer token")
-        options = {"require": ["exp"]}
-        kwargs: dict = {
+        options: dict[str, object] = {
+            "require": ["exp"],
             "audience": self.sharing.audience,
             "issuer": self.sharing.oidc_issuer,
-            "options": options,
             "leeway": 5,
         }
         try:
             if self._jwks is not None:
                 signing_key = self._jwks.get_signing_key_from_jwt(token)
-                claims = pyjwt.decode(
-                    token, signing_key.key, algorithms=["RS256"], **kwargs
-                )
+                claims = cast(Any, pyjwt.decode(
+                    token, signing_key.key, algorithms=["RS256"], options=options  # type: ignore
+                ))
             elif self.sharing.jwt_secret:
-                claims = pyjwt.decode(
-                    token, self.sharing.jwt_secret, algorithms=["HS256"], **kwargs
-                )
+                claims = cast(Any, pyjwt.decode(
+                    token, self.sharing.jwt_secret, algorithms=["HS256"], options=options  # type: ignore
+                ))
             else:
                 raise TokenValidationError(
                     "no identity provider configured "

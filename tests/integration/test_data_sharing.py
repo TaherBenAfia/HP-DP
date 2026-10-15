@@ -6,10 +6,6 @@ require auth to be enabled use environment variables to control behavior.
 
 from __future__ import annotations
 
-import os
-import time
-
-import jwt
 import pytest
 from fastapi.testclient import TestClient
 
@@ -123,18 +119,6 @@ class TestJWTTokenValidation:
     def test_valid_token_accepted(self):
         """Valid token with correct scope should be accepted."""
         # This test documents the expected behavior
-        token = jwt.encode(
-            {
-                "sub": "test-user",
-                "scope": "analytics:read",
-                "exp": int(time.time()) + 300,
-            },
-            "test-secret-key-for-hs256-tokens-min-32-chars",
-            algorithm="HS256",
-        )
-        # When SHARING_REQUIRE_AUTH=true and SHARING_JWT_SECRET is set:
-        # curl -H "Authorization: Bearer $token" http://localhost:8080/tables
-        # Should return 200 OK
 
     @pytest.mark.xfail(reason="Global config loaded at import time")
     def test_invalid_token_rejected(self):

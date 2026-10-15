@@ -1,6 +1,7 @@
 """Unit tests for tenant access control, publication, and revocation."""
 
 from pathlib import Path
+
 from src.platform.metadata_store import MetadataStore
 from src.platform.publication import PublicationManager
 

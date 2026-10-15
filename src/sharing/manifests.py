@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any, cast
 from pathlib import Path
 from typing import Any
 
@@ -38,5 +39,5 @@ def load_manifest(product: str, dataset_id: str | None = None, config: PlatformC
         if path.exists():
             payload = json.loads(path.read_text(encoding="utf-8"))
             payload["manifest_path"] = str(path)
-            return payload
+            return cast(dict[str, Any], payload)
     raise FileNotFoundError(f"no sharing manifest for product {product!r}")

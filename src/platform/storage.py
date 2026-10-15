@@ -126,7 +126,7 @@ class Storage:
             return None
         delta = DeltaTable(str(table))
         dataset = delta.to_pyarrow_dataset()
-        return pl.from_arrow(dataset.to_table())
+        return pl.from_arrow(dataset.to_table())  # type: ignore[return-value]
 
     def read_batch(self, table: Path, columns: list[str] | None = None) -> pl.DataFrame | None:
         """Read a Delta table, optionally projecting a column subset."""
@@ -134,7 +134,7 @@ class Storage:
             return None
         delta = DeltaTable(str(table))
         dataset = delta.to_pyarrow_dataset()
-        return pl.from_arrow(dataset.to_table(columns=columns))
+        return pl.from_arrow(dataset.to_table(columns=columns))  # type: ignore[return-value]
 
     def history(self, table: Path, limit: int = 10) -> list[dict[str, Any]]:
         """Return Delta transaction history entries (empty when unversioned)."""

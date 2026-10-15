@@ -3,11 +3,14 @@
 Every analytical method declares its purpose, required input columns, output schema,
 assumptions, missing-data policy, and interpretation limitations.
 The planner performs transparent capability matching against available data attributes.
+
+# type: ignore
 """
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any
+
 import polars as pl
 from pydantic import BaseModel, Field
 

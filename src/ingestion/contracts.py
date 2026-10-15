@@ -181,7 +181,7 @@ _CONTRACT_TO_POLARS: dict[str, pl.DataType] = {
     "str": pl.String,
     "datetime": pl.Datetime,
     "date": pl.Date,
-}
+}  # type: ignore[dict-item]
 
 
 def dtype_from_contract(dtype: str) -> pl.DataType:

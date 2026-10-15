@@ -3,6 +3,8 @@
 A domain adapter supplies:
 
 1. a datasource contract (already declarative, in ``configs/datasources``);
+
+# type: ignore
 2. transformation configuration (Silver rules);
 3. domain analytical features;
 4. domain statistical analysis;

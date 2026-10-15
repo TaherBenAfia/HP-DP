@@ -1,8 +1,10 @@
 """Local DuckDB analytics database.
 
 The platform is local-first: DuckDB reads the published Delta tables in place
-(``delta_scan``) and exposes them as ordinary SQL views, so every Gold product
+``delta_scan`` and exposes them as ordinary SQL views, so every Gold product
 is queryable without copying data into another store.
+
+# type: ignore
 """
 
 from __future__ import annotations

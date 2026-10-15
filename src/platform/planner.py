@@ -12,6 +12,7 @@ import hashlib
 import json
 import uuid
 from typing import Any
+
 from pydantic import BaseModel, Field
 
 from src.platform.asset_graph import AssetGraph, TaskDefinition
@@ -147,7 +148,7 @@ class ExecutionPlanner:
                         cached_mat = row["materialization_id"]
 
                 # Deterministic output fingerprint for produced assets
-                out_fp = hashlib.sha256(f"{task.task_id}:{task.version}:{composite_input_fp}".encode("utf-8")).hexdigest()[:16]
+                out_fp = hashlib.sha256(f"{task.task_id}:{task.version}:{composite_input_fp}".encode()).hexdigest()[:16]
 
                 if cached_mat:
                     planned = PlannedTask(

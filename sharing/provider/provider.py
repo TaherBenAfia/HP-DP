@@ -11,12 +11,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
 
 from src.platform.config import load_platform_config
-from src.platform.storage import Storage
-from src.sharing.manifests import list_manifests, manifests_dir
+from src.sharing.manifests import list_manifests
 
 
 def get_grants_file() -> Path:

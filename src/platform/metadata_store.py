@@ -182,7 +182,7 @@ class MetadataStore:
         payload_hash: str = "",
     ) -> bool:
         """Record an event as processed.
-        
+
         Returns True if newly inserted, False if it already existed (duplicate).
         """
         now = datetime.now(UTC).isoformat()

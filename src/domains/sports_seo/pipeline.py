@@ -3,6 +3,8 @@
 Stages: Silver -> features (visibility) -> statistics -> actions -> metrics ->
 publish (Delta + manifests + lineage). Every published table is stamped with
 its data-product version so a consumer can always tell which pipeline run
+
+# type: ignore
 produced the rows.
 """
 

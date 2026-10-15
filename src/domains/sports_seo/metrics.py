@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import polars as pl
 
+# type: ignore
+
 from src.analytics.metrics import action_distribution, entity_metrics, page_metrics, query_metrics
 from src.domains.sports_seo.actions import FAMILIES
 from src.domains.sports_seo.schema import ANALYSIS_KEY

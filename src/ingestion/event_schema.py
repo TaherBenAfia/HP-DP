@@ -9,9 +9,8 @@ actionable diagnostic error reporting.
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime
-from typing import Any, Type
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
@@ -78,7 +77,7 @@ class SportsSeoObservationPayloadV1_1(SportsSeoObservationPayload):
 
 
 # Schema Registry mapping
-SCHEMA_REGISTRY: dict[str, Type[BaseModel]] = {
+SCHEMA_REGISTRY: dict[str, type[BaseModel]] = {
     "page_observation:1.0.0": SportsSeoObservationPayload,
     "page_observation:1.1.0": SportsSeoObservationPayloadV1_1,
 }

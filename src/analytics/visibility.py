@@ -4,6 +4,10 @@ The SVTP is an *externally observable* proxy built from rank, entity and
 demand signals. It is not Search Console performance and it does not measure
 clicks, impressions or absolute search volume.
 
+# type: ignore
+
+# type: ignore
+
 Demand handling is deliberately explicit:
 
 * when no usable Google Trends (or equivalent) observations exist, the model

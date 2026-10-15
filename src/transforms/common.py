@@ -36,7 +36,7 @@ def normalize_text(series: pl.Series) -> pl.Series:
     """Trim and collapse internal whitespace in a string column."""
     if series.dtype not in (pl.String, pl.Categorical):
         return series
-    return series.str.strip_chars().str.replace_all(_WHITESPACE, " ")
+    return series.str.strip_chars().str.replace_all(_WHITESPACE.pattern, " ")
 
 
 def normalize_nulls(frame: pl.DataFrame, null_values: list[str] | None = None) -> pl.DataFrame:
@@ -200,7 +200,7 @@ def cast_to_contract(
         lowered = contract_dtype.lower()
 
         if lowered in {"bool", "boolean"}:
-            updates.append(normalize_boolean(frame[column]).alias(column))
+            updates.append(normalize_boolean(frame[column]).alias(column))  # type: ignore[arg-type]
             continue
         if lowered in {"object", "string", "str"}:
             if current != pl.String:
@@ -212,7 +212,7 @@ def cast_to_contract(
             if current == pl.String:
                 values, malformed = normalize_numeric(frame[column])
                 if int(malformed.sum()) == 0:
-                    updates.append(values.alias(column))
+                    updates.append(values.alias(column))  # type: ignore[arg-type]
                 else:
                     issues.append(
                         f"{column}: {int(malformed.sum())} unparseable value(s) kept as text"
@@ -227,14 +227,14 @@ def cast_to_contract(
                 values = frame[column]
                 integral = bool(((values % 1) == 0).fill_null(True).all())
                 if integral:
-                    updates.append(values.cast(pl.Int64, strict=False).alias(column))
+                    updates.append(values.cast(pl.Int64, strict=False).alias(column))  # type: ignore[arg-type]
                 else:
                     issues.append(f"{column}: fractional values kept as float")
                 continue
             if current == pl.String:
                 values, malformed = normalize_numeric(frame[column])
                 if int(malformed.sum()) == 0:
-                    updates.append(values.cast(pl.Int64, strict=False).alias(column))
+                    updates.append(values.cast(pl.Int64, strict=False).alias(column))  # type: ignore[arg-type]
                 else:
                     issues.append(
                         f"{column}: {int(malformed.sum())} unparseable value(s) kept as text"

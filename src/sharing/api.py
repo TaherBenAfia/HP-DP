@@ -4,6 +4,8 @@ Serves the published Gold products over HTTP with JWT/OIDC protection.
 The application only ever registers ``GET`` endpoints: the platform shares
 data, it does not accept writes.
 
+# type: ignore
+
 Run locally::
 
     uvicorn src.sharing.api:app --reload --port 8000

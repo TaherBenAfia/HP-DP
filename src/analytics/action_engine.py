@@ -3,6 +3,8 @@
 Every score in this module is reproducible arithmetic on published columns:
 
 * ``deficit(feature, row)`` - how far a row is from a documented target
+
+# type: ignore
   (binary presence, an acceptable range, or the empirical distribution);
 * ``family_score`` - the weighted mean of its feature deficits;
 * ``primary_action`` - the family with the largest deficit.

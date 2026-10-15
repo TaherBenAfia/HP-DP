@@ -5,8 +5,6 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from src.ingestion.event_schema import (
-    EventEnvelope,
-    SportsSeoObservationPayload,
     SportsSeoObservationPayloadV1_1,
     export_json_schema,
     validate_event,

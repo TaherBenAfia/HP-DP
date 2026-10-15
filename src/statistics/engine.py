@@ -3,6 +3,8 @@
 Tests implemented:
 
 * Spearman rank correlation between a numeric feature and the outcome;
+
+# type: ignore
 * Mann-Whitney U comparing the two outcome classes;
 * Chi-square of independence for binary/categorical features;
 * Benjamini-Hochberg FDR correction applied *within each test family*;

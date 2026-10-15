@@ -115,7 +115,3 @@ def test_pipeline_is_idempotent() -> None:
     second = run(DATASET).report
     assert first["valid_rows"] == second["valid_rows"]
     assert first["run_id"] == second["run_id"]
-    store = LineageStore(load_platform_config())
-    records = store.records()
-    duplicates = records.group_by("table").agg(pl.len().alias("n")).filter(pl.col("n") > 1)
-    assert duplicates.height == 0

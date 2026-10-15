@@ -11,12 +11,13 @@ import json
 import time
 import uuid
 from datetime import UTC, datetime
-from typing import Any, Callable
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 from src.platform.asset_graph import AssetGraph
 from src.platform.metadata_store import MetadataStore
-from src.platform.planner import ExecutionPlan, PlannedTask
+from src.platform.planner import ExecutionPlan
 
 
 class ExecutionResult(BaseModel):

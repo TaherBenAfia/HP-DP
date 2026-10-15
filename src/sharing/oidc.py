@@ -20,9 +20,9 @@ Scope conventions:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any, cast
 
 import jwt as pyjwt
-from typing import Any, cast
 
 from src.platform.config import PlatformConfig, load_platform_config
 

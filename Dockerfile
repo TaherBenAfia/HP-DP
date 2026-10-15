@@ -14,7 +14,6 @@ RUN apt-get update \
 COPY pyproject.toml README.md ./
 COPY src ./src
 COPY platform_cli ./platform_cli
-COPY flows ./flows
 COPY configs ./configs
 COPY scripts ./scripts
 COPY tests ./tests

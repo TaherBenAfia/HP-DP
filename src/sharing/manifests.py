@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, cast
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from src.platform.config import PlatformConfig, load_platform_config
 

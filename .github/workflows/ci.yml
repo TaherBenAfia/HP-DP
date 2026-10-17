@@ -74,14 +74,13 @@ jobs:
               json.dump({'summary': summary, 'failures_errors': failures_errors}, f, indent=2)
           PY
 
-      - name: Commit Test Summary
+      - name: Upload Test Summary
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add test-summary.json
-          git commit -m "test: update test summary [skip ci]" || echo "No changes to commit"
-          git push
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: test-summary.json
+          if-no-files-found: error
 
       - name: Check Mypy Critical Errors
         shell: bash

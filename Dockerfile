@@ -2,8 +2,7 @@ FROM python:3.13-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PREFECT_TELEMETRY_ENABLED=false
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
@@ -24,5 +23,5 @@ RUN pip install -e ".[platform]"
 
 EXPOSE 8080 8501
 
-# Default: read-only API. docker-compose overrides for the dashboard/prefect.
+# Default: read-only API. docker-compose overrides for the dashboard.
 CMD ["uvicorn", "src.sharing.api:app", "--host", "0.0.0.0", "--port", "8080"]

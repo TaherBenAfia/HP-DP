@@ -1,0 +1,43 @@
+# Policy-as-code: declarative governance rules evaluated after every pipeline
+# run. Each policy binds an `id` to an implemented rule in src/governance.
+# `severity: error` fails the run; `warning` records a finding only.
+
+version: "1.0"
+
+policies:
+  - id: bronze_immutable
+    description: Bronze tables are append-only; no update or delete is permitted.
+    rule: bronze_append_only
+    severity: error
+
+  - id: quarantine_preserved
+    description: Invalid rows are quarantined, never silently dropped.
+    rule: quarantine_not_dropped
+    severity: error
+
+  - id: fdr_discipline
+    description: The Benjamini-Hochberg alpha must stay within the approved bound.
+    rule: fdr_alpha_max
+    severity: error
+    params:
+      max_alpha: 0.05
+
+  - id: no_causal_claims
+    description: Published statistics remain associational; causal estimates live only in signed causal artifacts.
+    rule: interpretation_associational
+    severity: error
+
+  - id: gold_lineage_present
+    description: Every published Gold table must carry at least one lineage record.
+    rule: gold_lineage_present
+    severity: error
+
+  - id: signed_artifacts
+    description: Action recommendations must ship with a verifiable signature.
+    rule: artifacts_signed
+    severity: warning
+
+  - id: demand_component_neutral
+    description: The unavailable demand component must contribute its neutral value.
+    rule: demand_component_neutral
+    severity: error

@@ -36,6 +36,23 @@ Generic engines live in `src/analytics/`, `src/statistics/`, `src/query/`, `src/
 | Gold | `src/domains/.../pipeline.py` | Delta tables in `data/gold/` |
 | Sharing | `src/sharing/`, `src/query/`, `app.py` | manifests, API :8080, dashboard :8501 |
 
+## Evidence-native lakehouse stack
+
+Beyond the medallion core, the platform ships a governance-aware, evidence-native
+lakehouse stack:
+
+| Capability | Module | Technology |
+| --- | --- | --- |
+| Lakehouse storage | `src/lakehouse/` | Apache Iceberg (SQLite or Polaris REST catalog) |
+| Orchestration | `src/orchestration/` | Dagster assets + Temporal workflows |
+| Causal inference | `src/causal/` | DoWhy, EconML, DoubleML, split conformal |
+| Governance | `src/governance/` | Policy-as-code + Ed25519 artifact signing |
+| Observability | `src/observability/` | OpenLineage events + Evidently drift |
+| Feature store | `src/feature_store/` | Feast + LanceDB |
+| Semantic layer | `src/semantic/` | SQLMesh |
+| OLAP sink | `src/olap/` | ClickHouse (optional) |
+| Recommendations | `src/recommend/` | DSPy + LangGraph |
+
 ## Quickstart
 
 ### Using uv (recommended)
@@ -72,12 +89,18 @@ uvicorn src.sharing.api:app --port 8080   # read-only JSON API
 Individual steps: `ingest start [--force]`, `silver build`, `analytics run`.
 Dataset/contract inspection: `datasource list|info|validate`.
 
-### Prefect flows
+### Orchestration, governance & observability
 
 ```bash
-python -m flows.pipeline_flow   # silver-to-gold flow (quality gate included)
-python -m flows.scheduled       # scheduled daily ETL
+python -m platform_cli lakehouse publish      # promote Delta tables into the Iceberg catalog
+python -m platform_cli lakehouse tables       # list published Iceberg tables
+python -m platform_cli governance check       # policy-as-code evaluation
+python -m platform_cli drift check            # Evidently drift vs. the Silver reference
 ```
+
+Orchestration is provided by Dagster (`src/orchestration/dagster_defs.py`) and
+Temporal (`src/orchestration/temporal_defs.py`); Temporal activities run
+in-process when no `TEMPORAL_ADDRESS` is configured.
 
 ## Research Base Model & SVTP Proxy
 
@@ -103,7 +126,7 @@ The platform is built on a **research base model** with **synthetic data** gener
 
 ```bash
 ruff check .
-pytest                # 168 tests: unit + platform + integration + legacy DVDCF
+pytest                # 178 passed, 1 skipped: unit + platform + integration + lakehouse stack
 ```
 
 `tests/unit/` covers the generic engines, `tests/platform/` the config, contracts and lineage, `tests/integration/` the full Bronze→Gold pipeline, query engine and API (including authentication).

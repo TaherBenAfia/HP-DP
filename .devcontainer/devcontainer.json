@@ -6,11 +6,12 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
-  "forwardPorts": [8080, 8501, 4200],
+  "forwardPorts": [8080, 8501, 3000, 8233],
   "portsAttributes": {
     "8080": { "label": "Sharing API" },
     "8501": { "label": "Streamlit dashboard" },
-    "4200": { "label": "Prefect server" }
+    "3000": { "label": "Dagster UI" },
+    "8233": { "label": "Temporal UI" }
   },
   "postCreateCommand": "pip install -e \".[platform,dev]\"",
   "customizations": {

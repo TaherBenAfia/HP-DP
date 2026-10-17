@@ -16,7 +16,7 @@
 | Primary framework | Polars + Delta Lake (via `deltalake` crate) |
 | API | FastAPI + Uvicorn |
 | Dashboard | Streamlit (7 pages, `app.py`) |
-| Orchestration | Prefect 3 (optional profile in docker-compose) |
+| Orchestration | Dagster + Temporal (`src/orchestration/`; in-process by default) |
 | Auth | JWT/OIDC via `PyJWT` + Keycloak (docker-compose) |
 | Test framework | pytest + pytest-asyncio |
 | Linter/formatter | ruff |
@@ -245,14 +245,16 @@ The project began as a research crawler (DVDCF) for sports SEO analysis and has 
 
 **Preserve but do not modify.** These are frozen research artifacts. The new platform does not depend on them.
 
-### 2.20 Prefect Flows
+### 2.20 Orchestration
 
 | Item | Detail |
 |---|---|
-| Files | `flows/ingest_flow.py`, `flows/pipeline_flow.py`, `flows/scheduled.py` |
+| Files | `src/orchestration/dagster_defs.py`, `src/orchestration/temporal_defs.py` |
 | Status | **Implemented** |
 
-**Assessment:** Thin wrappers around `ingest()`, `build_silver()`, and `run()`. Include a quality gate. The new DAG-based executor will supersede these, but they remain functional.
+**Assessment:** Dagster assets mirror the Bronze→Silver→Gold→Iceberg→OpenLineage
+flow; Temporal activities wrap the same stage functions and run in-process when
+no `TEMPORAL_ADDRESS` is configured. The legacy Prefect `flows/` were removed.
 
 ### 2.21 Docker Compose
 
@@ -261,7 +263,9 @@ The project began as a research crawler (DVDCF) for sports SEO analysis and has 
 | Files | `docker-compose.yml`, `Dockerfile`, `.devcontainer/` |
 | Status | **Implemented** |
 
-**Assessment:** Three services: Keycloak (auth), API (FastAPI), Dashboard (Streamlit). Optional Prefect profile. No event broker (Redpanda/Kafka), no MinIO. **Will need extension** for the new architecture.
+**Assessment:** Three services: Keycloak (auth), API (FastAPI), Dashboard (Streamlit),
+plus an optional Redpanda streaming profile. Orchestration runs in-process (Dagster
+`dagster dev` / Temporal `temporal server start-dev`). MinIO is not included.
 
 ### 2.22 Data Files
 
@@ -280,7 +284,7 @@ The `data/` directory contains:
 | Concern | Locations | Resolution |
 |---|---|---|
 | Configuration | `src/config_loader.py` (DVDCF) vs `src/platform/config.py` (platform) | Keep both. They serve different systems. |
-| Pipeline orchestration | `src/pipeline.py` (crawler) vs `src/domains/sports_seo/pipeline.py` (Gold) vs `flows/*.py` (Prefect) | The Gold pipeline is canonical. Prefect flows are thin wrappers. Crawler pipeline is legacy. |
+| Pipeline orchestration | `src/pipeline.py` (crawler) vs `src/domains/sports_seo/pipeline.py` (Gold) vs `src/orchestration/` (Dagster/Temporal) | The Gold pipeline is canonical. Dagster/Temporal definitions are thin wrappers. Crawler pipeline is legacy. |
 | Data models | `src/interfaces/records.py` (crawler types) vs `src/ingestion/contracts.py` (platform contracts) | Separate concerns. No conflict. |
 | Storage | `src/modules/storage/` (crawler) vs `src/platform/storage.py` (platform) | Separate. Platform storage is canonical. |
 

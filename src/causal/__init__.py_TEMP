@@ -1,0 +1,5 @@
+try:
+    from ._nx_compat import *  # noqa: F401
+except Exception:
+    pass
+

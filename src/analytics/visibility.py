@@ -4,17 +4,13 @@ The SVTP is an *externally observable* proxy built from rank, entity and
 demand signals. It is not Search Console performance and it does not measure
 clicks, impressions or absolute search volume.
 
-# type: ignore
-
-# type: ignore
-
 Demand handling is deliberately explicit:
 
 * when no usable Google Trends (or equivalent) observations exist, the model
-  reports ``demand_component_available = false``, uses a documented neutral
-  value, and never claims that temporal demand was measured;
+reports ``demand_component_available = false``, uses a documented neutral
+value, and never claims that temporal demand was measured;
 * when a demand dataset is supplied later, ``DemandSignal`` activates without
-  any change to the page-diagnostic architecture.
+any change to the page-diagnostic architecture.
 """
 
 from __future__ import annotations
@@ -91,14 +87,15 @@ class VisibilityModel:
         )
         self.weights = dict(settings.weights)
 
-    # -- internals ---------------------------------------------------------
     @staticmethod
     def _minmax(series: pl.Series) -> pl.Series:
         """Rescale a numeric series to [0, 1]; constant series map to 0.5."""
-        numeric = series.cast(pl.Float64)
-        low = numeric.min()
-        high = numeric.max()
-        if low is None or high is None or high == low:
+        numeric = series.cast(pl.Float64, strict=False)
+        low_value = numeric.min()
+        high_value = numeric.max()
+        low = float(low_value) if low_value is not None else 0.0
+        high = float(high_value) if high_value is not None else 1.0
+        if high == low:
             return pl.Series(series.name, [0.5] * numeric.len())
         return (numeric - low) / (high - low)
 
@@ -107,17 +104,17 @@ class VisibilityModel:
         if self.rank.column not in frame.columns:
             raise KeyError(f"rank column {self.rank.column!r} missing from frame")
 
-        positions = frame[self.rank.column].cast(pl.Float64)
-        observed_max = positions.max() or 1.0
+        positions = frame[self.rank.column].cast(pl.Float64, strict=False)
+        observed_max = float(positions.max() or 1.0)
         observed_max = observed_max if observed_max > 0 else 1.0
 
         if self.rank.higher_is_better:
-            rank_score = (positions - (positions.min() or 0.0)) / observed_max
+            min_value = float(positions.min() or 0.0)
+            rank_score = (positions - min_value) / observed_max
         else:
             rank_score = (observed_max - positions + 1.0) / observed_max
         rank_score = rank_score.fill_null(0.0).alias("rank_score")
 
-        # Entity signal: mean rank score of every observation of that entity.
         base = frame.with_columns(rank_score)
         if self.entity.available and self.entity.column in frame.columns:
             entity_visibility = (
@@ -170,8 +167,6 @@ class VisibilityModel:
             .alias("rank_group_robust"),
         )
 
-        # Balanced label: exactly half of the observations in each class.
-        # Ordinal ranking makes the split deterministic for tied scores.
         base = base.with_columns(
             pl.col("svtp_score")
             .rank("ordinal", descending=True)

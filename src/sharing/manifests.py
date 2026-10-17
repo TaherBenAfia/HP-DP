@@ -20,13 +20,17 @@ def list_manifests(config: PlatformConfig | None = None) -> list[dict[str, Any]]
     root = manifests_dir(config)
     payloads: list[dict[str, Any]] = []
     for path in sorted(root.glob("*/*.json")):
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
         payload["manifest_path"] = str(path)
         payloads.append(payload)
     return sorted(payloads, key=lambda item: str(item.get("generated_at", "")), reverse=True)
 
 
-def load_manifest(product: str, dataset_id: str | None = None, config: PlatformConfig | None = None) -> dict[str, Any]:
+def load_manifest(
+    product: str,
+    dataset_id: str | None = None,
+    config: PlatformConfig | None = None,
+) -> dict[str, Any]:
     """Load the manifest of one product (searching all datasets if needed)."""
     root = manifests_dir(config)
     candidates: list[Path]
@@ -36,7 +40,7 @@ def load_manifest(product: str, dataset_id: str | None = None, config: PlatformC
         candidates = sorted(root.glob(f"*/{product}.json"))
     for path in candidates:
         if path.exists():
-            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
             payload["manifest_path"] = str(path)
-            return cast(dict[str, Any], payload)
+            return payload
     raise FileNotFoundError(f"no sharing manifest for product {product!r}")

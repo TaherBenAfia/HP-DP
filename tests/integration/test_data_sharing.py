@@ -137,8 +137,12 @@ class TestJWTTokenValidation:
 def test_consumer_script_exists():
     """Verify consumer script exists."""
     import pathlib
-    consumer_path = pathlib.Path("sharing/consumer/consumer.py")
-    assert consumer_path.exists()
+
+    candidate_paths = [
+        pathlib.Path("sharing/consumer/consumer.py"),
+        pathlib.Path("src/sharing/consumer/consumer.py"),
+    ]
+    assert any(path.exists() for path in candidate_paths)
 
 
 def test_provider_script_exists():

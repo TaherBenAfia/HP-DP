@@ -8,7 +8,6 @@ typed :class:`DriftReport` so callers never depend on Evidently's schema.
 from __future__ import annotations
 
 import json
-import math
 import re
 from datetime import UTC, datetime
 from pathlib import Path

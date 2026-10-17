@@ -10,6 +10,8 @@ jobs:
   test:
     name: Run CLI Platform Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -34,60 +36,46 @@ jobs:
       - name: Run Pytest Suite and Save Results
         run: |
           uv run pytest --junitxml=pytest-results.xml
-          python -c "
-import xml.etree.ElementTree as ET
-import json
-import sys
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          import json
 
-tree = ET.parse('pytest-results.xml')
-root = tree.getroot()
+          tree = ET.parse('pytest-results.xml')
+          root = tree.getroot()
 
-# Extract summary
-summary = {
-    'tests': root.attrib.get('tests', 0),
-    'failures': root.attrib.get('failures', 0),
-    'errors': root.attrib.get('errors', 0),
-    'skipped': root.attrib.get('skipped', 0),
-    'hostname': root.attrib.get('hostname', 'unknown'),
-    'timestamp': root.attrib.get('timestamp', ''),
-}
+          summary = {
+              'tests': root.attrib.get('tests', 0),
+              'failures': root.attrib.get('failures', 0),
+              'errors': root.attrib.get('errors', 0),
+              'skipped': root.attrib.get('skipped', 0),
+              'hostname': root.attrib.get('hostname', 'unknown'),
+              'timestamp': root.attrib.get('timestamp', ''),
+          }
 
-# Extract failure/error details
-failures_errors = []
-for testcase in root.findall('.//testcase'):
-    name = testcase.get('name')
-    classname = testcase.get('classname', '')
-    result = testcase.get('result', 'unknown')
-    
-    failure = testcase.find('failure')
-    error = testcase.find('error')
-    
-    msg = ''
-    if failure is not None:
-        msg = failure.get('message', '')
-        # Get the full traceback text
-        msg += '\\n' + (failure.text or '').strip()
-    elif error is not None:
-        msg = error.get('message', '')
-        msg += '\\n' + (error.text or '').strip()
-    
-    failures_errors.append({
-        'name': name,
-        'classname': classname,
-        'result': result,
-        'message': msg[:500] if msg else ''  # truncate long messages
-    })
+          failures_errors = []
+          for testcase in root.findall('.//testcase'):
+              name = testcase.get('name')
+              classname = testcase.get('classname', '')
+              failure = testcase.find('failure')
+              error = testcase.find('error')
+              msg = ''
+              if failure is not None:
+                  msg = failure.get('message', '') + '\n' + (failure.text or '').strip()
+              elif error is not None:
+                  msg = error.get('message', '') + '\n' + (error.text or '').strip()
+              failures_errors.append({
+                  'name': name,
+                  'classname': classname,
+                  'result': testcase.get('result', 'unknown'),
+                  'message': msg[:500] if msg else ''
+              })
 
-result = {
-    'summary': summary,
-    'failures_errors': failures_errors
-}
-
-with open('test-summary.json', 'w') as f:
-    json.dump(result, f, indent=2)
-"
+          with open('test-summary.json', 'w') as f:
+              json.dump({'summary': summary, 'failures_errors': failures_errors}, f, indent=2)
+          PY
 
       - name: Commit Test Summary
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -96,15 +84,20 @@ with open('test-summary.json', 'w') as f:
           git push
 
       - name: Check Mypy Critical Errors
+        shell: bash
         run: |
-          set +o pipefail
+          set +e
           RESULT=$(uv run mypy src/ 2>&1)
-          ERROR_COUNT=$(echo "$RESULT" | grep -c "error:" || true)
-          if [ "$ERROR_COUNT" -gt 0 ]; then
+          STATUS=$?
+          echo "$RESULT"
+
+          ERROR_COUNT=$(printf '%s\n' "$RESULT" | grep -c "error:" || true)
+          if [ "$STATUS" -ne 0 ] || [ "$ERROR_COUNT" -gt 0 ]; then
             echo "::error::Found $ERROR_COUNT mypy errors"
-            echo "$RESULT" | grep "error:" | head -20 | while read -r line; do
+            printf '%s\n' "$RESULT" | grep "error:" | head -20 | while IFS= read -r line; do
               echo "::error::${line}"
             done
-          else
-            echo "::notice::No mypy errors found"
+            exit 1
           fi
+
+          echo "::notice::No mypy errors found"

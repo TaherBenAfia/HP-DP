@@ -35,6 +35,12 @@ _config = load_platform_config()
 _validator = TokenValidator(_config)
 _storage = Storage(_config)
 
+
+def _sharing_config():
+    """Return the config actually used by the active validator."""
+    return getattr(_validator, "sharing", _config.sharing)
+
+
 app = FastAPI(
     title="Enterprise Analytics Platform - sharing API",
     version=_config.platform.version,
@@ -64,14 +70,15 @@ def get_principal(
     authorization: Annotated[str | None, Header()] = None,
 ) -> Principal:
     """Authenticate the request and check the read scope."""
+    sharing_cfg = _sharing_config()
     try:
         token = token_from_header(authorization)
         principal = _validator.principal_for(token)
     except TokenValidationError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
-    if not principal.has(_config.sharing.read_scope):
+    if not principal.has(sharing_cfg.read_scope):
         raise HTTPException(
-            status_code=403, detail=f"missing scope {_config.sharing.read_scope!r}"
+            status_code=403, detail=f"missing scope {sharing_cfg.read_scope!r}"
         )
     return principal
 
@@ -82,13 +89,14 @@ PrincipalDep = Annotated[Principal, Depends(get_principal)]
 @app.get("/health", summary="Liveness and configuration summary")
 def health() -> dict[str, Any]:
     """Whether the API is up and how it authenticates callers."""
+    sharing_cfg = _sharing_config()
     return {
         "status": "ok",
         "platform": _config.platform.name,
         "version": _config.platform.version,
         "auth_required": _validator.enabled,
         "token_algorithm": _validator.algorithm,
-        "read_only": _config.sharing.read_only,
+        "read_only": sharing_cfg.read_only,
         "tables": len(READABLE_TABLES),
     }
 

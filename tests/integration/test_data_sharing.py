@@ -137,19 +137,19 @@ class TestJWTTokenValidation:
 def test_consumer_script_exists():
     """Verify consumer script exists."""
     import pathlib
-    consumer_path = pathlib.Path("sharing/consumer/consumer.py")
+    consumer_path = pathlib.Path("src/sharing/consumer/consumer.py")
     assert consumer_path.exists()
 
 
 def test_provider_script_exists():
     """Verify provider script exists."""
     import pathlib
-    provider_path = pathlib.Path("sharing/provider/provider.py")
+    provider_path = pathlib.Path("src/sharing/provider/provider.py")
     assert provider_path.exists()
 
 
 def test_realm_export_exists():
     """Verify Keycloak realm export exists."""
     import pathlib
-    realm_path = pathlib.Path("sharing/provider/realm-export.json")
+    realm_path = pathlib.Path("src/sharing/provider/realm-export.json")
     assert realm_path.exists()

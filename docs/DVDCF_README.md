@@ -92,7 +92,7 @@ python scripts/export_dataset.py --output data/exported_dataset.csv
 ## Quality gates
 
 ```bash
-python -m pytest                     # 101 tests
+python -m pytest                     # 178 passed, 1 skipped (full suite)
 ruff check . && ruff format --check .
 python -m mypy src                   # strict mode, 0 errors
 ```

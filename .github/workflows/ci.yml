@@ -34,66 +34,16 @@ jobs:
       - name: Run Pytest Suite and Save Results
         run: |
           uv run pytest --junitxml=pytest-results.xml
-          python -c "
-import xml.etree.ElementTree as ET
-import json
-import sys
-
-tree = ET.parse('pytest-results.xml')
-root = tree.getroot()
-
-# Extract summary
-summary = {
-    'tests': root.attrib.get('tests', 0),
-    'failures': root.attrib.get('failures', 0),
-    'errors': root.attrib.get('errors', 0),
-    'skipped': root.attrib.get('skipped', 0),
-    'hostname': root.attrib.get('hostname', 'unknown'),
-    'timestamp': root.attrib.get('timestamp', ''),
-}
-
-# Extract failure/error details
-failures_errors = []
-for testcase in root.findall('.//testcase'):
-    name = testcase.get('name')
-    classname = testcase.get('classname', '')
-    result = testcase.get('result', 'unknown')
-    
-    failure = testcase.find('failure')
-    error = testcase.find('error')
-    
-    msg = ''
-    if failure is not None:
-        msg = failure.get('message', '')
-        # Get the full traceback text
-        msg += '\\n' + (failure.text or '').strip()
-    elif error is not None:
-        msg = error.get('message', '')
-        msg += '\\n' + (error.text or '').strip()
-    
-    failures_errors.append({
-        'name': name,
-        'classname': classname,
-        'result': result,
-        'message': msg[:500] if msg else ''  # truncate long messages
-    })
-
-result = {
-    'summary': summary,
-    'failures_errors': failures_errors
-}
-
-with open('test-summary.json', 'w') as f:
-    json.dump(result, f, indent=2)
-"
+          python .github/actions/pytest-summary.py
 
       - name: Commit Test Summary
+        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add test-summary.json
           git commit -m "test: update test summary [skip ci]" || echo "No changes to commit"
-          git push
+          git push origin "HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
 
       - name: Check Mypy Critical Errors
         run: |

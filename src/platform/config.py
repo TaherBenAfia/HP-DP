@@ -150,6 +150,145 @@ class PlatformMeta(BaseModel):
     storage_backend: str = "filesystem"
 
 
+class LakehouseCatalogConfig(BaseModel):
+    """Iceberg catalog settings. ``type`` selects a local SQLite catalog or a
+    REST catalog such as Apache Polaris."""
+
+    type: str = "local"
+    uri: str = "sqlite:///data/lakehouse/catalog.db"
+    warehouse: str = "data/lakehouse/warehouse"
+    rest_uri: str = ""
+    rest_token: str = ""
+    credential: str = ""
+
+
+class LakehouseConfig(BaseModel):
+    """Open Iceberg/Polaris storage layer."""
+
+    enabled: bool = True
+    namespace: str = "statseo"
+    catalog: LakehouseCatalogConfig = Field(default_factory=LakehouseCatalogConfig)
+    publish_tables: list[str] = Field(
+        default_factory=lambda: [
+            "data/silver/sports_seo",
+            "data/gold/statistical_evidence",
+            "data/gold/action_recommendations",
+            "data/gold/visibility_summary",
+        ]
+    )
+
+
+class TemporalConfig(BaseModel):
+    """Temporal worker settings. An empty ``address`` means activities run
+    in-process without a Temporal server (used by tests and local runs)."""
+
+    address: str = ""
+    namespace: str = "default"
+    task_queue: str = "statseo"
+
+
+class DagsterConfig(BaseModel):
+    """Dagster job settings."""
+
+    job_name: str = "seo_pipeline"
+
+
+class OrchestrationConfig(BaseModel):
+    """Streaming + batch orchestration behaviour."""
+
+    temporal: TemporalConfig = Field(default_factory=TemporalConfig)
+    dagster: DagsterConfig = Field(default_factory=DagsterConfig)
+
+
+class ConformalConfig(BaseModel):
+    """Split-conformal correction applied to proxy-based effect estimates."""
+
+    alpha: float = 0.1
+    train_fraction: float = 0.5
+    min_train: int = 30
+
+
+class CausalConfig(BaseModel):
+    """Causal core estimation behaviour. Estimates carry explicit
+    assumptions and are never presented as design-based guarantees."""
+
+    methods: list[str] = Field(
+        default_factory=lambda: ["dowhy_linear", "econml_linear_dml", "doubleml_plr"]
+    )
+    alpha: float = 0.05
+    min_observations: int = 50
+    conformal: ConformalConfig = Field(default_factory=ConformalConfig)
+
+
+class GovernanceConfig(BaseModel):
+    """Policy-as-code and signed-artifact behaviour."""
+
+    policies_path: str = "configs/policies.yaml"
+    signing_key_path: str = "configs/keys/artifact_signing.key"
+    require_signatures: bool = True
+
+
+class OpenLineageConfig(BaseModel):
+    """OpenLineage event emission."""
+
+    enabled: bool = True
+    transport: str = "file"
+    file_path: str = "logs/openlineage/events.jsonl"
+    namespace: str = "statseo_local"
+
+
+class DriftConfig(BaseModel):
+    """Evidently-based drift detection between Silver snapshots."""
+
+    enabled: bool = True
+    reference_path: str = "data/silver/_baseline/silver_reference.parquet"
+    report_dir: str = "logs/drift"
+    drift_share_threshold: float = 0.3
+
+
+class ObservabilityConfig(BaseModel):
+    """End-to-end lineage emission and drift detection."""
+
+    openlineage: OpenLineageConfig = Field(default_factory=OpenLineageConfig)
+    drift: DriftConfig = Field(default_factory=DriftConfig)
+
+
+class FeatureStoreConfig(BaseModel):
+    """Feast + LanceDB feature store behaviour."""
+
+    repo_path: str = "feature_repo"
+    offline_dir: str = "data/features/offline"
+    online_db: str = "data/features/lancedb"
+    entity: str = "page_id"
+
+
+class SemanticConfig(BaseModel):
+    """SQLMesh semantic-layer behaviour."""
+
+    project_path: str = "sqlmesh_project"
+    gateway: str = "localduck"
+    state_path: str = "data/sqlmesh/state"
+
+
+class OlapConfig(BaseModel):
+    """ClickHouse OLAP sink (optional; disabled unless a URL is provided)."""
+
+    enabled: bool = False
+    url: str = "${CLICKHOUSE_URL:-}"
+    database: str = "statseo"
+    username: str = "${CLICKHOUSE_USER:-default}"
+    password: str = "${CLICKHOUSE_PASSWORD:-}"
+    table_prefix: str = ""
+
+
+class RecommendConfig(BaseModel):
+    """DSPy + LangGraph recommendation behaviour. An empty ``lm_model``
+    selects the deterministic offline LM used by tests."""
+
+    lm_model: str = "${DSPY_LM_MODEL:-}"
+    graph_state_path: str = "logs/recommend/graph_state.json"
+
+
 class PlatformConfig(BaseModel):
     """Root configuration model for the whole platform."""
 
@@ -163,6 +302,15 @@ class PlatformConfig(BaseModel):
     action_engine: ActionEngineConfig = Field(default_factory=ActionEngineConfig)
     data_products: DataProductConfig = Field(default_factory=DataProductConfig)
     sharing: SharingConfig = Field(default_factory=SharingConfig)
+    lakehouse: LakehouseConfig = Field(default_factory=LakehouseConfig)
+    orchestration: OrchestrationConfig = Field(default_factory=OrchestrationConfig)
+    causal: CausalConfig = Field(default_factory=CausalConfig)
+    governance: GovernanceConfig = Field(default_factory=GovernanceConfig)
+    observability: ObservabilityConfig = Field(default_factory=ObservabilityConfig)
+    feature_store: FeatureStoreConfig = Field(default_factory=FeatureStoreConfig)
+    semantic: SemanticConfig = Field(default_factory=SemanticConfig)
+    olap: OlapConfig = Field(default_factory=OlapConfig)
+    recommend: RecommendConfig = Field(default_factory=RecommendConfig)
     logging: dict[str, Any] = Field(default_factory=dict)
 
     repo_root: Path = Field(default_factory=find_repo_root)

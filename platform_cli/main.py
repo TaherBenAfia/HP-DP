@@ -15,6 +15,9 @@ stats       summary of the published statistical evidence
 query       run SQL against the published Delta tables
 lineage     trace a published table back to its source
 share       list or inspect sharing manifests
+lakehouse   publish / list Iceberg lakehouse tables
+governance  evaluate policy-as-code rules
+drift       compare current Silver against the drift reference
 run         ingest + silver + analytics in one step
 """
 
@@ -380,6 +383,40 @@ def cmd_plan(args: argparse.Namespace) -> int:
     return 0
 
 
+# -- lakehouse -------------------------------------------------------------
+def cmd_lakehouse(args: argparse.Namespace) -> int:
+    from src.lakehouse.tables import list_published_tables, publish_all
+
+    cfg = _config(args)
+    if args.action == "publish":
+        published = publish_all(cfg)
+        _print_json({"namespace": cfg.lakehouse.namespace, "published": published})
+        return 0
+    _print_json({"namespace": cfg.lakehouse.namespace, "tables": list_published_tables(cfg)})
+    return 0
+
+
+# -- governance ------------------------------------------------------------
+def cmd_governance(args: argparse.Namespace) -> int:
+    from src.governance.policies import enforce
+
+    report = enforce(_config(args))
+    print(report.render())
+    return 0 if report.passed else 2
+
+
+# -- drift -----------------------------------------------------------------
+def cmd_drift(args: argparse.Namespace) -> int:
+    from src.observability.drift import run_drift_check
+
+    report = run_drift_check(_config(args))
+    if report is None:
+        print("drift reference initialised; run again to compare")
+        return 0
+    _print_json(report.model_dump())
+    return 0 if report.passed else 2
+
+
 # -- parser ----------------------------------------------------------------
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -463,6 +500,18 @@ def build_parser() -> argparse.ArgumentParser:
     plan.add_argument("--assets", type=str, default="gold_evidence", help="comma-separated requested asset IDs")
     plan.add_argument("--tenant", type=str, default="tenant_alpha", help="target tenant ID")
     plan.set_defaults(func=cmd_plan)
+
+    lakehouse = sub.add_parser("lakehouse", help="Iceberg lakehouse publish/inspect")
+    lakehouse.add_argument("action", choices=["publish", "tables"], nargs="?", default="tables")
+    lakehouse.set_defaults(func=cmd_lakehouse)
+
+    governance = sub.add_parser("governance", help="policy-as-code governance checks")
+    governance.add_argument("action", choices=["check"], nargs="?", default="check")
+    governance.set_defaults(func=cmd_governance)
+
+    drift = sub.add_parser("drift", help="Evidently drift check against the reference")
+    drift.add_argument("action", choices=["check"], nargs="?", default="check")
+    drift.set_defaults(func=cmd_drift)
 
     return parser
 

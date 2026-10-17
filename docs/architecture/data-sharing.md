@@ -338,9 +338,12 @@ curl -H "Authorization: Bearer $TOKEN_WITHOUT_SCOPE" http://localhost:8080/table
 
 ## Limitations
 
-1. **No Iceberg/Polaris**: Current implementation uses Delta tables, not Iceberg
-2. **No catalog-level permissions**: Authorization is scope-based, not table-level
-3. **No short-lived credentials**: Tokens are issued by Keycloak, not the platform
-4. **No schema evolution tracking**: Manifests don't track schema changes
+1. **No catalog-level permissions**: Authorization is scope-based, not table-level
+2. **No short-lived credentials**: Tokens are issued by Keycloak, not the platform
+3. **No schema evolution tracking**: Manifests don't track schema changes
+
+The sharing layer reads the published Delta tables; versioned Iceberg/Polaris
+snapshots are available separately through the lakehouse stack
+(`src/lakehouse/`, `python -m platform_cli lakehouse publish`).
 
 These limitations are documented and will be addressed in future iterations.

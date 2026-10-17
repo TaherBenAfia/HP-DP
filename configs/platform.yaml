@@ -93,3 +93,86 @@ sharing:
 logging:
   level: INFO
   format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+
+# ---------------------------------------------------------------------------
+# Evidence-native lakehouse stack
+# ---------------------------------------------------------------------------
+
+lakehouse:
+  enabled: true
+  namespace: statseo
+  catalog:
+    # local: SQLite Iceberg catalog; rest: an Apache Polaris REST catalog.
+    type: local
+    uri: sqlite:///data/lakehouse/catalog.db
+    warehouse: data/lakehouse/warehouse
+    rest_uri: ${POLARIS_URI:-http://localhost:8181/api/catalog}
+    rest_token: ${POLARIS_TOKEN:-}
+    credential: ${POLARIS_CREDENTIAL:-}
+  # Delta tables promoted into the Iceberg catalog (repo-relative paths).
+  publish_tables:
+    - data/silver/sports_seo
+    - data/gold/statistical_evidence
+    - data/gold/action_recommendations
+    - data/gold/visibility_summary
+
+orchestration:
+  temporal:
+    # Empty address => activities run in-process (tests / local runs).
+    address: ${TEMPORAL_ADDRESS:-}
+    namespace: default
+    task_queue: statseo
+  dagster:
+    job_name: seo_pipeline
+
+causal:
+  methods:
+    - dowhy_linear
+    - econml_linear_dml
+    - doubleml_plr
+  alpha: 0.05
+  min_observations: 50
+  conformal:
+    alpha: 0.1
+    train_fraction: 0.5
+    min_train: 30
+
+governance:
+  policies_path: configs/policies.yaml
+  signing_key_path: configs/keys/artifact_signing.key
+  require_signatures: true
+
+observability:
+  openlineage:
+    enabled: true
+    transport: file
+    file_path: logs/openlineage/events.jsonl
+    namespace: statseo_local
+  drift:
+    enabled: true
+    reference_path: data/silver/_baseline/silver_reference.parquet
+    report_dir: logs/drift
+    drift_share_threshold: 0.3
+
+feature_store:
+  repo_path: feature_repo
+  offline_dir: data/features/offline
+  online_db: data/features/lancedb
+  entity: page_id
+
+semantic:
+  project_path: sqlmesh_project
+  gateway: localduck
+  state_path: data/sqlmesh/state
+
+olap:
+  enabled: false
+  url: ${CLICKHOUSE_URL:-}
+  database: statseo
+  username: ${CLICKHOUSE_USER:-default}
+  password: ${CLICKHOUSE_PASSWORD:-}
+  table_prefix: ""
+
+recommend:
+  lm_model: ${DSPY_LM_MODEL:-}
+  graph_state_path: logs/recommend/graph_state.json

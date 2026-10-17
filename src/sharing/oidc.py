@@ -110,21 +110,28 @@ class TokenValidator:
         """Validate one JWT and return its principal."""
         if not token:
             raise TokenValidationError("empty bearer token")
-        options: dict[str, object] = {
-            "require": ["exp"],
-            "audience": self.sharing.audience,
-            "issuer": self.sharing.oidc_issuer,
-            "leeway": 5,
-        }
+        options: dict[str, object] = {"require": ["exp"]}
         try:
             if self._jwks is not None:
                 signing_key = self._jwks.get_signing_key_from_jwt(token)
                 claims = cast(Any, pyjwt.decode(
-                    token, signing_key.key, algorithms=["RS256"], options=options  # type: ignore
+                    token,
+                    signing_key.key,
+                    algorithms=["RS256"],
+                    audience=self.sharing.audience,
+                    issuer=self.sharing.oidc_issuer,
+                    leeway=5,
+                    options=options,  # type: ignore
                 ))
             elif self.sharing.jwt_secret:
                 claims = cast(Any, pyjwt.decode(
-                    token, self.sharing.jwt_secret, algorithms=["HS256"], options=options  # type: ignore
+                    token,
+                    self.sharing.jwt_secret,
+                    algorithms=["HS256"],
+                    audience=self.sharing.audience,
+                    issuer=self.sharing.oidc_issuer,
+                    leeway=5,
+                    options=options,  # type: ignore
                 ))
             else:
                 raise TokenValidationError(

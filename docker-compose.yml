@@ -67,19 +67,9 @@ services:
       - api
       - keycloak
 
-  # Prefect orchestration (optional profile)
-  prefect:
-    image: enterprise-analytics-platform:latest
-    build: .
-    profiles: ["orchestration"]
-    command: prefect server start --host 0.0.0.0 --port 4200
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./data:/app/data
-      - ./sharing:/app/sharing
-      - ./configs:/app/configs
-      - ./.prefect:/root/.prefect
+  # Orchestration (Dagster + Temporal) runs in-process by default; start a
+  # server locally with `dagster dev` or `temporal server start-dev`. No
+  # long-running orchestration service is required by the compose stack.
 
   # Redpanda: Kafka-compatible streaming event broker
   redpanda:

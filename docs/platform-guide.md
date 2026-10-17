@@ -7,9 +7,11 @@ statistical evidence, action scoring, sharing and dashboards.
 
 `configs/platform.yaml` is validated by `src/platform/config.py`
 (`PlatformConfig`). Sections: `paths`, `statistics`, `visibility`,
-`action_engine`, `sharing`, `data_products`. `${VAR:-default}` placeholders
-are expanded from the environment at load time; the config is cached
-(`load_platform_config.cache_clear()` in tests).
+`action_engine`, `sharing`, `data_products`, plus the evidence-native stack:
+`lakehouse`, `orchestration`, `causal`, `governance`, `observability`,
+`feature_store`, `semantic`, `olap`, `recommend`. `${VAR:-default}`
+placeholders are expanded from the environment at load time; the config is
+cached (`load_platform_config.cache_clear()` in tests).
 
 Data sources are declared in `configs/datasources/`:
 
@@ -156,13 +158,33 @@ Queries, Observations, Lineage) backed by the same Gold tables, with a
 persistent research-integrity disclaimer and a drill-down into each row's
 `evidence_features` JSON.
 
-## 10. Orchestration
+## 10. Orchestration and the evidence-native stack
 
-`flows/` (Prefect 3): tasks for ingest, validate, silver, analytics and a
-quality gate (valid-row share ≥ threshold); flows `ingest`, `silver-to-gold`,
-`daily_etl`. Run `python -m flows.pipeline_flow` for a single execution or
-`python -m flows.scheduled` for the schedule. Telemetry can be disabled
-with `PREFECT_TELEMETRY_ENABLED=false`.
+Batch orchestration is available through **Dagster** (`src/orchestration/dagster_defs.py`,
+assets for ingest → silver → gold → Iceberg publish → OpenLineage emission) and
+**Temporal** (`src/orchestration/temporal_defs.py`, durable workflows). Temporal
+activities run in-process when `orchestration.temporal.address` is empty, so no
+server is required for local runs or tests.
+
+The wider lakehouse stack lives in dedicated modules:
+
+| Module | Responsibility | Technology |
+| --- | --- | --- |
+| `src/lakehouse/` | Publish Delta tables into a versioned Iceberg catalog | Apache Iceberg (SQLite or Polaris REST) |
+| `src/causal/` | Causal effect estimation with explicit assumptions | DoWhy, EconML, DoubleML, split conformal |
+| `src/governance/` | Policy-as-code evaluation + Ed25519 artifact signing | `configs/policies.yaml`, `cryptography` |
+| `src/observability/` | OpenLineage events + Evidently drift detection | `openlineage-python`, `evidently` |
+| `src/feature_store/` | Offline/online feature serving | Feast + LanceDB |
+| `src/semantic/` | Semantic mesh / metrics layer | SQLMesh |
+| `src/olap/` | Columnar OLAP sink (optional) | ClickHouse |
+| `src/recommend/` | Evidence-grounded recommendations | DSPy + LangGraph |
+
+```bash
+python -m platform_cli lakehouse publish   # promote Delta tables into Iceberg
+python -m platform_cli lakehouse tables    # list published Iceberg tables
+python -m platform_cli governance check    # evaluate configs/policies.yaml
+python -m platform_cli drift check         # Evidently drift vs. the Silver reference
+```
 
 ## 11. Testing
 
@@ -171,9 +193,10 @@ with `PREFECT_TELEMETRY_ENABLED=false`.
 | `tests/unit/` | visibility model, statistics engine, action engine |
 | `tests/platform/` | config, env expansion, contracts, registry, checksums |
 | `tests/integration/` | Bronze→Gold pipeline, FDR discipline, lineage, manifests, query engine, API + auth |
+| `tests/lakehouse/`, `tests/causal/`, `tests/governance/`, `tests/observability/`, `tests/feature_store/`, `tests/semantic/`, `tests/olap/`, `tests/orchestration/`, `tests/recommend/` | evidence-native lakehouse stack |
 | legacy DVDCF tests | `tests/test_*.py` (crawler framework) |
 
 ```bash
 ruff check .   # clean
-pytest         # 168 passed
+pytest         # 178 passed, 1 skipped
 ```

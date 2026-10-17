@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import polars as pl
 from deltalake import DeltaTable, write_deltalake
@@ -40,7 +40,6 @@ class Storage:
     def __init__(self, config: PlatformConfig | None = None) -> None:
         self.config = config or load_platform_config()
 
-    # -- locations ---------------------------------------------------------
     @property
     def root(self) -> Path:
         """Repository root."""
@@ -82,7 +81,6 @@ class Storage:
         """Path of the local DuckDB analytics database."""
         return self.path(self.config.paths.duckdb_path)
 
-    # -- Delta I/O ---------------------------------------------------------
     def exists(self, table: Path) -> bool:
         """True when a Delta table exists at ``table``."""
         return (table / "_delta_log").exists()
@@ -100,12 +98,9 @@ class Storage:
         table.mkdir(parents=True, exist_ok=True)
         if not isinstance(data, pl.DataFrame):
             data = pl.DataFrame(data)
-        # All-null columns infer to the Null dtype, which Arrow cannot write.
         null_columns = [name for name, dtype in data.schema.items() if dtype == pl.Null]
         if null_columns:
-            data = data.with_columns(
-                [pl.col(name).cast(pl.String) for name in null_columns]
-            )
+            data = data.with_columns([pl.col(name).cast(pl.String) for name in null_columns])
         write_deltalake(
             table,
             data,
@@ -126,7 +121,8 @@ class Storage:
             return None
         delta = DeltaTable(str(table))
         dataset = delta.to_pyarrow_dataset()
-        return pl.from_arrow(dataset.to_table())  # type: ignore[return-value]
+        frame = pl.from_arrow(dataset.to_table())
+        return cast(pl.DataFrame, frame.to_frame() if isinstance(frame, pl.Series) else frame)
 
     def read_batch(self, table: Path, columns: list[str] | None = None) -> pl.DataFrame | None:
         """Read a Delta table, optionally projecting a column subset."""
@@ -134,7 +130,8 @@ class Storage:
             return None
         delta = DeltaTable(str(table))
         dataset = delta.to_pyarrow_dataset()
-        return pl.from_arrow(dataset.to_table(columns=columns))  # type: ignore[return-value]
+        frame = pl.from_arrow(dataset.to_table(columns=columns))
+        return cast(pl.DataFrame, frame.to_frame() if isinstance(frame, pl.Series) else frame)
 
     def history(self, table: Path, limit: int = 10) -> list[dict[str, Any]]:
         """Return Delta transaction history entries (empty when unversioned)."""

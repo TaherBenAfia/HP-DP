@@ -73,6 +73,7 @@ warn_unused_configs = true
 disallow_any_generics = true
 plugins = ["pydantic.mypy"]
 exclude = ["tests/", "build/", "dist/", ".venv/"]
+
 [[tool.mypy.overrides]]
 module = [
     "lxml.*",
@@ -85,6 +86,9 @@ module = [
     "langdetect",
     "sentence_transformers",
     "brotli",
+    "scipy.*",
+    "statsmodels.*",
+    "jwt.*",
 ]
 ignore_missing_imports = true
 

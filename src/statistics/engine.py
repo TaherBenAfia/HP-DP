@@ -3,8 +3,6 @@
 Tests implemented:
 
 * Spearman rank correlation between a numeric feature and the outcome;
-
-# type: ignore
 * Mann-Whitney U comparing the two outcome classes;
 * Chi-square of independence for binary/categorical features;
 * Benjamini-Hochberg FDR correction applied *within each test family*;
@@ -21,7 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import polars as pl
@@ -141,17 +139,19 @@ def spearman_test(
     if np.isnan(rho):
         return StatResult(feature_name, family, outcome_name, "spearman", n, status="skipped",
                           notes="undefined correlation")
+    rho_float = float(rho)
+    p_value_float = float(p_value)
     return StatResult(
         feature=feature_name,
         family=family,
         outcome=outcome_name,
         test="spearman",
         n=n,
-        statistic=float(rho),
-        p_value=float(p_value),
-        effect_size=float(rho),
+        statistic=rho_float,
+        p_value=p_value_float,
+        effect_size=rho_float,
         effect_size_type="spearman_rho",
-        direction=_direction(float(rho)),
+        direction=_direction(rho_float),
         notes="rank association; not a causal effect",
     )
 
@@ -232,9 +232,6 @@ def chi_square_test(
     denominator = n * (min(rows, cols) - 1)
     effect = float(np.sqrt(chi2 / denominator)) if denominator else 0.0
 
-    # Direction: is the feature's reference level more prevalent in class 1?
-    # For binary features the reference is the "present" level ("1"/"true");
-    # for wider categories it is the modal level.
     levels = [column for column in contingency.columns if column != "g"]
     row_shares = table / table.sum(axis=1, keepdims=True)
     direction = "none"
@@ -335,7 +332,6 @@ def run_tests(
                 ).results.append(class_test)
                 results.append(class_test)
 
-    # FDR correction within each test family.
     for family in families.values():
         tested = [result for result in family.results if result.p_value is not None]
         if not tested:
@@ -358,9 +354,9 @@ def run_tests(
 def _result_schema(column: str) -> pl.DataType:
     """Stable schema for the statistical evidence table."""
     if column in {"n"}:
-        return pl.Int64
+        return cast(pl.DataType, pl.Int64)
     if column in {"statistic", "p_value", "effect_size", "q_value"}:
-        return pl.Float64
+        return cast(pl.DataType, pl.Float64)
     if column == "significant_fdr":
-        return pl.Boolean
-    return pl.String
+        return cast(pl.DataType, pl.Boolean)
+    return cast(pl.DataType, pl.String)

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import polars as pl
 from pydantic import BaseModel, Field, model_validator
@@ -94,7 +94,6 @@ class DatasourceContract(BaseModel):
             raise ValueError("primary_key contains duplicates")
         return self
 
-    # -- derived views -----------------------------------------------------
     @property
     def source_attributes(self) -> list[Attribute]:
         """Attributes expected to be physically present in the source file."""
@@ -167,26 +166,26 @@ class IngestionMetadata(BaseModel):
 
 
 _CONTRACT_TO_POLARS: dict[str, pl.DataType] = {
-    "int64": pl.Int64,
-    "int32": pl.Int32,
-    "int16": pl.Int16,
-    "int8": pl.Int8,
-    "uint64": pl.UInt64,
-    "float64": pl.Float64,
-    "float32": pl.Float32,
-    "bool": pl.Boolean,
-    "boolean": pl.Boolean,
-    "object": pl.String,
-    "string": pl.String,
-    "str": pl.String,
-    "datetime": pl.Datetime,
-    "date": pl.Date,
-}  # type: ignore[dict-item]
+    "int64": cast(pl.DataType, pl.Int64),
+    "int32": cast(pl.DataType, pl.Int32),
+    "int16": cast(pl.DataType, pl.Int16),
+    "int8": cast(pl.DataType, pl.Int8),
+    "uint64": cast(pl.DataType, pl.UInt64),
+    "float64": cast(pl.DataType, pl.Float64),
+    "float32": cast(pl.DataType, pl.Float32),
+    "bool": cast(pl.DataType, pl.Boolean),
+    "boolean": cast(pl.DataType, pl.Boolean),
+    "object": cast(pl.DataType, pl.String),
+    "string": cast(pl.DataType, pl.String),
+    "str": cast(pl.DataType, pl.String),
+    "datetime": cast(pl.DataType, pl.Datetime),
+    "date": cast(pl.DataType, pl.Date),
+}
 
 
 def dtype_from_contract(dtype: str) -> pl.DataType:
     """Map a contract dtype string to a Polars dtype."""
-    return _CONTRACT_TO_POLARS.get(dtype.lower(), pl.String)
+    return cast(pl.DataType, _CONTRACT_TO_POLARS.get(dtype.lower(), cast(pl.DataType, pl.String)))
 
 
 def dtype_family(dtype: pl.DataType) -> str:

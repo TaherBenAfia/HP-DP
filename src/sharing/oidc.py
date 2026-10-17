@@ -66,6 +66,8 @@ def _scopes_from_claims(claims: dict[str, object]) -> frozenset[str]:
     if isinstance(roles, list):
         scopes.update(str(role) for role in roles)
     realm = claims.get("realm_access") or {}
+    if not isinstance(realm, dict):
+        realm = {}
     realm_roles = realm.get("roles") if isinstance(realm, dict) else None
     if isinstance(realm_roles, list):
         scopes.update(str(role) for role in realm_roles)
@@ -86,7 +88,6 @@ class TokenValidator:
                 lifespan=300,
             )
 
-    # -- properties --------------------------------------------------------
     @property
     def enabled(self) -> bool:
         """True when callers must present a token."""
@@ -105,7 +106,6 @@ class TokenValidator:
             authenticated=False,
         )
 
-    # -- validation --------------------------------------------------------
     def validate(self, token: str) -> Principal:
         """Validate one JWT and return its principal."""
         if not token:
@@ -119,13 +119,31 @@ class TokenValidator:
         try:
             if self._jwks is not None:
                 signing_key = self._jwks.get_signing_key_from_jwt(token)
-                claims = cast(Any, pyjwt.decode(
-                    token, signing_key.key, algorithms=["RS256"], options=options  # type: ignore
-                ))
+                claims = cast(
+                    Any,
+                    pyjwt.decode(
+                        token,
+                        signing_key.key,
+                        algorithms=["RS256"],
+                        options=cast(Any, options),
+                        audience=self.sharing.audience,
+                        issuer=self.sharing.oidc_issuer,
+                        leeway=5,
+                    ),
+                )
             elif self.sharing.jwt_secret:
-                claims = cast(Any, pyjwt.decode(
-                    token, self.sharing.jwt_secret, algorithms=["HS256"], options=options  # type: ignore
-                ))
+                claims = cast(
+                    Any,
+                    pyjwt.decode(
+                        token,
+                        self.sharing.jwt_secret,
+                        algorithms=["HS256"],
+                        options=cast(Any, options),
+                        audience=self.sharing.audience,
+                        issuer=self.sharing.oidc_issuer,
+                        leeway=5,
+                    ),
+                )
             else:
                 raise TokenValidationError(
                     "no identity provider configured "

@@ -97,9 +97,7 @@ def normalize_numeric(series: pl.Series) -> tuple[pl.Series, pl.Series]:
         numeric = stripped.cast(pl.Float64, strict=False)
         malformed = numeric.is_null() & stripped.is_not_null() & stripped.ne("")
         return numeric, malformed
-    return series.cast(pl.Float64, strict=False), pl.Series(
-        series.name, [False] * series.len()
-    )
+    return series.cast(pl.Float64, strict=False), pl.Series(series.name, [False] * series.len())
 
 
 def normalize_url(value: str | None) -> str | None:
@@ -200,7 +198,7 @@ def cast_to_contract(
         lowered = contract_dtype.lower()
 
         if lowered in {"bool", "boolean"}:
-            updates.append(normalize_boolean(frame[column]).alias(column))  # type: ignore[arg-type]
+            updates.append(normalize_boolean(frame[column]).alias(column))
             continue
         if lowered in {"object", "string", "str"}:
             if current != pl.String:
@@ -212,7 +210,7 @@ def cast_to_contract(
             if current == pl.String:
                 values, malformed = normalize_numeric(frame[column])
                 if int(malformed.sum()) == 0:
-                    updates.append(values.alias(column))  # type: ignore[arg-type]
+                    updates.append(values.alias(column))
                 else:
                     issues.append(
                         f"{column}: {int(malformed.sum())} unparseable value(s) kept as text"
@@ -227,14 +225,14 @@ def cast_to_contract(
                 values = frame[column]
                 integral = bool(((values % 1) == 0).fill_null(True).all())
                 if integral:
-                    updates.append(values.cast(pl.Int64, strict=False).alias(column))  # type: ignore[arg-type]
+                    updates.append(values.cast(pl.Int64, strict=False).alias(column))
                 else:
                     issues.append(f"{column}: fractional values kept as float")
                 continue
             if current == pl.String:
                 values, malformed = normalize_numeric(frame[column])
                 if int(malformed.sum()) == 0:
-                    updates.append(values.cast(pl.Int64, strict=False).alias(column))  # type: ignore[arg-type]
+                    updates.append(values.cast(pl.Int64, strict=False).alias(column))
                 else:
                     issues.append(
                         f"{column}: {int(malformed.sum())} unparseable value(s) kept as text"

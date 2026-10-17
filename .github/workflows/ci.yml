@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
   test:
     name: Run CLI Platform Tests
@@ -14,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v3
@@ -34,27 +39,67 @@ jobs:
       - name: Run Pytest Suite and Save Results
         run: |
           uv run pytest --junitxml=pytest-results.xml
-          python .github/actions/pytest-summary.py
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          import json
 
-      - name: Commit Test Summary
-        continue-on-error: true
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add test-summary.json
-          git commit -m "test: update test summary [skip ci]" || echo "No changes to commit"
-          git push origin "HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          tree = ET.parse('pytest-results.xml')
+          root = tree.getroot()
+
+          summary = {
+              'tests': root.attrib.get('tests', 0),
+              'failures': root.attrib.get('failures', 0),
+              'errors': root.attrib.get('errors', 0),
+              'skipped': root.attrib.get('skipped', 0),
+              'hostname': root.attrib.get('hostname', 'unknown'),
+              'timestamp': root.attrib.get('timestamp', ''),
+          }
+
+          failures_errors = []
+          for testcase in root.findall('.//testcase'):
+              name = testcase.get('name')
+              classname = testcase.get('classname', '')
+              failure = testcase.find('failure')
+              error = testcase.find('error')
+              msg = ''
+              if failure is not None:
+                  msg = failure.get('message', '') + '\n' + (failure.text or '').strip()
+              elif error is not None:
+                  msg = error.get('message', '') + '\n' + (error.text or '').strip()
+              failures_errors.append({
+                  'name': name,
+                  'classname': classname,
+                  'result': testcase.get('result', 'unknown'),
+                  'message': msg[:500] if msg else ''
+              })
+
+          with open('test-summary.json', 'w') as f:
+              json.dump({'summary': summary, 'failures_errors': failures_errors}, f, indent=2)
+          PY
+
+      - name: Upload Test Summary
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: test-summary.json
+          if-no-files-found: error
 
       - name: Check Mypy Critical Errors
+        shell: bash
         run: |
-          set +o pipefail
+          set +e
           RESULT=$(uv run mypy src/ 2>&1)
-          ERROR_COUNT=$(echo "$RESULT" | grep -c "error:" || true)
-          if [ "$ERROR_COUNT" -gt 0 ]; then
+          STATUS=$?
+          echo "$RESULT"
+
+          ERROR_COUNT=$(printf '%s\n' "$RESULT" | grep -c "error:" || true)
+          if [ "$STATUS" -ne 0 ] || [ "$ERROR_COUNT" -gt 0 ]; then
             echo "::error::Found $ERROR_COUNT mypy errors"
-            echo "$RESULT" | grep "error:" | head -20 | while read -r line; do
+            printf '%s\n' "$RESULT" | grep "error:" | head -20 | while IFS= read -r line; do
               echo "::error::${line}"
             done
-          else
-            echo "::notice::No mypy errors found"
+            exit 1
           fi
+
+          echo "::notice::No mypy errors found"
